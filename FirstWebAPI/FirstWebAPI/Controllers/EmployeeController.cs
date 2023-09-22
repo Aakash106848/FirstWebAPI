@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -24,28 +25,33 @@ namespace FirstWebAPI.Controllers
         }
 
         [HttpPost("/AddEmployee")]
-        public string AddEmployee(Employee newEmployee)
+        public int AddEmployee(EmpViewModel newemp)
         {
-            int employeestatus = _repositoryEmployee.AddEmployee(newEmployee);
-            if (employeestatus == 0)
+            Employee employee = new Employee()
             {
-                return "Employee Not Added To Database Since it already exist";
-            }
-            else
-            {
-                return "Employee Added To Database";
-            }
+                // EmpId = emp.EmployeeId, IT WONT work
+                FirstName = newemp.FirstName,
+                LastName = newemp.LastName,
+                BirthDate = newemp.BirthDate,
+                HireDate = newemp.HireDate,
+                Title = newemp.Title,
+                City = newemp.City,
+                ReportsTo = newemp.ReportsTo > 0 ? newemp.ReportsTo : 0,
+            };
+            _repositoryEmployee.AddEmployee(employee);
+            return 1;
         }
 
+
         [HttpPut("/ModifyEmployee")]
-        public Employee ModifyEmployee(int id, [FromBody] Employee updatedEmployee)
+        public int ModifyEmployee(int id, [FromBody] Employee updatedEmployee)
         {
             updatedEmployee.EmployeeId = id;
-            Employee savedEmployee = _repositoryEmployee.UpdateEmployee(updatedEmployee);
+            int savedEmployee = _repositoryEmployee.ModifyEmployee(id);
             return savedEmployee;
         }
 
-        [HttpPut("/DeleteEmployee")]
+        [HttpDelete("/DeleteEmployee")]
 
         public string DeleteEmployee(int id)
         {
