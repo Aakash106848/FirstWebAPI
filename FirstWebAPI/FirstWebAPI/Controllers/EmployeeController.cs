@@ -44,11 +44,19 @@ namespace FirstWebAPI.Controllers
 
 
         [HttpPut("/ModifyEmployee")]
-        public int ModifyEmployee(int id, [FromBody] Employee updatedEmployee)
+        public int ModifyEmployee(int id, [FromBody] EmpViewModel updatedEmployee)
         {
-            updatedEmployee.EmployeeId = id;
-            int savedEmployee = _repositoryEmployee.ModifyEmployee(id);
-            return savedEmployee;
+            Employee employee = new Employee();
+            employee.EmployeeId = updatedEmployee.EmpId;
+            employee.FirstName = updatedEmployee.FirstName;
+            employee.LastName  = updatedEmployee.LastName;
+            employee.Title = updatedEmployee.Title;
+            employee.City = updatedEmployee.City;
+            employee.ReportsTo = updatedEmployee.ReportsTo;
+            employee.HireDate = updatedEmployee.HireDate;
+            employee.BirthDate = updatedEmployee.BirthDate;
+            _repositoryEmployee.UpdateEmployee(employee);
+            return 1;
         }
 
         [HttpDelete("/DeleteEmployee")]
